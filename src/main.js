@@ -194,11 +194,11 @@ function renderCheonjiinStep(character, actions) {
 function resetArcadeGame() { stopArcadeGame(); arcadeScore = 0; arcadeMissed = 0; arcadeSeconds = 45; $('arcadeScore').textContent = '0'; $('arcadeMissed').textContent = '0'; $('arcadeTime').textContent = '45'; $('arcadeInput').value = ''; $('arcadeStart').textContent = '게임 시작'; $('arcadeStart').disabled = false; $('arcadeReady').hidden = false; $('arcadeReady').innerHTML = '<span>⌨️</span><p>시작 버튼을 누르면<br>낱말이 내려와요</p>'; document.querySelectorAll('.falling-word').forEach(word => word.remove()); }
 function startArcadeGame() {
   resetArcadeGame(); arcadeRunning = true; $('arcadeReady').hidden = true; $('arcadeStart').textContent = '게임 중'; $('arcadeStart').disabled = true; $('arcadeInput').focus({preventScroll:true}); spawnArcadeWord();
-  arcadeSpawnTimer = setInterval(spawnArcadeWord, 1800);
+  arcadeSpawnTimer = setInterval(spawnArcadeWord, 2400);
   arcadeClockTimer = setInterval(() => { arcadeSeconds--; $('arcadeTime').textContent = arcadeSeconds; if (arcadeSeconds <= 0) finishArcadeGame(); }, 1000);
 }
 function spawnArcadeWord() {
-  if (!arcadeRunning) return; const word = lessons.game.items[Math.floor(Math.random() * lessons.game.items.length)]; const el = document.createElement('span'); el.className = 'falling-word'; el.textContent = word; el.dataset.word = word; el.style.left = `${8 + Math.random() * 68}%`; el.style.animationDuration = `${6 + Math.random() * 2}s`; $('arcadeField').appendChild(el);
+  if (!arcadeRunning) return; const word = lessons.game.items[Math.floor(Math.random() * lessons.game.items.length)]; const el = document.createElement('span'); el.className = 'falling-word'; el.textContent = word; el.dataset.word = word; el.style.left = `${8 + Math.random() * 68}%`; el.style.animationDuration = `${10 + Math.random() * 3}s`; $('arcadeField').appendChild(el);
   el.addEventListener('animationend', () => { if (!el.isConnected) return; arcadeMissed++; $('arcadeMissed').textContent = arcadeMissed; el.remove(); });
 }
 function checkArcadeWord() {
