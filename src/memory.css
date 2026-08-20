@@ -1,0 +1,9 @@
+.memory-card {
+  transition: transform .4s, opacity .35s, visibility .35s;
+}
+
+.memory-card.cleared {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
