@@ -59,7 +59,7 @@ app.innerHTML = `
       <div id="cheonjiinGuide" class="cheonjiin" hidden>
         <div class="keypad-head"><strong>천지인 글자 위치</strong><span id="guideText">첫소리를 눌러요</span></div>
         <div id="cheonjiinKeys" class="cheonjiin-keys">
-          ${['ㅣ','ㆍ','ㅡ','ㄱㅋ','ㄴㄹ','ㄷㅌ','ㅂㅍ','ㅅㅎ','ㅈㅊ','ㅇㅁ','띄어쓰기','⌫'].map(key => `<div class="cheon-key" data-jamo="${key}">${key}<img class="finger" src="/images/single-finger-pointer.png" alt="이 키를 누르는 손가락"></div>`).join('')}
+          ${['ㅣ','ㆍ','ㅡ','ㄱㅋ','ㄴㄹ','ㄷㅌ','ㅂㅍ','ㅅㅎ','ㅈㅊ','ㅇㅁ','띄어쓰기','⌫'].map(key => `<div class="cheon-key" data-jamo="${key}">${key}<img class="finger" src="/images/tiny-finger-pointer.png" alt="이 키를 누르는 손가락"></div>`).join('')}
         </div>
       </div>
       <label for="typingInput">아래 칸에 똑같이 입력하세요</label>
@@ -166,9 +166,8 @@ const vowelTaps = {'ㅣ':['ㅣ'],'ㅡ':['ㅡ'],'ㅏ':['ㅣ','ㆍ'],'ㅑ':['ㅣ',
 function updateCheonjiinGuide() {
   if (currentKey !== 'letters') return;
   const target = answer(); const typedLength = [...$('typingInput').value].length; const next = [...target][Math.min(typedLength, [...target].length - 1)];
-  const steps = getCheonjiinSteps(next); const signature = `${next}-${typedLength}`;
-  if (signature !== guideSignature) { guideSignature = signature; guideStep = 0; clearInterval(guideTimer); guideTimer = setInterval(() => { guideStep = (guideStep + 1) % steps.length; renderCheonjiinStep(next, steps); }, 950); }
-  renderCheonjiinStep(next, steps);
+  const actions = groupCheonjiinSteps(getCheonjiinSteps(next)); const signature = `${next}-${typedLength}`;
+  if (signature !== guideSignature) { guideSignature = signature; guideStep = 0; clearTimeout(guideTimer); renderCheonjiinStep(next, actions); scheduleNextGuideStep(next, actions); }
 }
 function getCheonjiinSteps(character) {
   if (character === ' ') return ['띄어쓰기'];
@@ -177,10 +176,19 @@ function getCheonjiinSteps(character) {
   const finalParts = {'ㄳ':['ㄱ','ㅅ'],'ㄵ':['ㄴ','ㅈ'],'ㄶ':['ㄴ','ㅎ'],'ㄺ':['ㄹ','ㄱ'],'ㄻ':['ㄹ','ㅁ'],'ㄼ':['ㄹ','ㅂ'],'ㄽ':['ㄹ','ㅅ'],'ㄾ':['ㄹ','ㅌ'],'ㄿ':['ㄹ','ㅍ'],'ㅀ':['ㄹ','ㅎ'],'ㅄ':['ㅂ','ㅅ']}[final] || (final ? [final] : []);
   return [...(consonantTaps[initial] || [keypadGroups[initial]]), ...(vowelTaps[medial] || ['ㅣ']), ...finalParts.flatMap(jamo => consonantTaps[jamo] || [keypadGroups[jamo]])];
 }
-function renderCheonjiinStep(character, steps) {
-  const index = guideStep % steps.length; const current = steps[index];
-  document.querySelectorAll('.cheon-key').forEach(key => key.classList.toggle('target', key.dataset.jamo === current));
-  $('guideText').innerHTML = `“${character || ''}” 입력 ${index + 1}/${steps.length} <b>${steps.join(' → ')}</b>`;
+function groupCheonjiinSteps(steps) {
+  return steps.reduce((actions, key) => { const last = actions.at(-1); if (last?.key === key) last.count++; else actions.push({key,count:1}); return actions; }, []);
+}
+function scheduleNextGuideStep(character, actions) {
+  const action = actions[guideStep % actions.length];
+  guideTimer = setTimeout(() => { guideStep = (guideStep + 1) % actions.length; renderCheonjiinStep(character, actions); scheduleNextGuideStep(character, actions); }, action.count > 1 ? 1350 : 1050);
+}
+function renderCheonjiinStep(character, actions) {
+  const index = guideStep % actions.length; const action = actions[index];
+  document.querySelectorAll('.cheon-key').forEach(key => { key.classList.remove('target','tap-once','tap-twice','tap-three'); if (key.dataset.jamo === action.key) { void key.offsetWidth; key.classList.add('target', action.count === 1 ? 'tap-once' : action.count === 2 ? 'tap-twice' : 'tap-three'); } });
+  const order = actions.map(item => `${item.key}${item.count > 1 ? ` ×${item.count}` : ''}`).join(' → ');
+  const tapWord = action.count === 1 ? '한 번 톡' : action.count === 2 ? '두 번 톡톡' : '세 번 톡톡톡';
+  $('guideText').innerHTML = `“${character || ''}” ${tapWord} <b>${order}</b>`;
 }
 
 function resetArcadeGame() { stopArcadeGame(); arcadeScore = 0; arcadeMissed = 0; arcadeSeconds = 45; $('arcadeScore').textContent = '0'; $('arcadeMissed').textContent = '0'; $('arcadeTime').textContent = '45'; $('arcadeInput').value = ''; $('arcadeStart').textContent = '게임 시작'; $('arcadeStart').disabled = false; $('arcadeReady').hidden = false; $('arcadeReady').innerHTML = '<span>⌨️</span><p>시작 버튼을 누르면<br>낱말이 내려와요</p>'; document.querySelectorAll('.falling-word').forEach(word => word.remove()); }

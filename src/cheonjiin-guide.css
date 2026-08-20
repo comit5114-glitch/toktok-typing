@@ -3,7 +3,13 @@
 .keypad-head>span{text-align:right;font-size:.72rem}
 .keypad-head>span b{display:block;margin-top:3px;color:#c3473f;font-size:.76rem;white-space:normal}
 .cheon-key.target{z-index:20}
-.cheon-key .finger{display:none;position:absolute;left:50%;right:auto;top:50%;bottom:auto;width:34px;height:auto;z-index:30;object-fit:contain;filter:drop-shadow(0 3px 3px #162d4c35);pointer-events:none;transform:translate(-50%,0)}
-.cheon-key.target .finger{display:block;animation:singleFingerTap .8s ease-in-out infinite alternate}
+.cheon-key .finger{display:none;position:absolute;left:50%;right:auto;top:50%;bottom:auto;width:22px;height:auto;z-index:30;object-fit:contain;filter:drop-shadow(0 2px 2px #162d4c30);pointer-events:none;transform:translate(-50%,5px)}
+.cheon-key.target .finger{display:block}
+.cheon-key.tap-once .finger{animation:tapOnce .8s ease-in-out 1}
+.cheon-key.tap-twice .finger{animation:tapTwice 1.15s ease-in-out 1}
+.cheon-key.tap-three .finger{animation:tapThree 1.3s ease-in-out 1}
 @keyframes realFingerTap{from{transform:translateY(8px) scale(.96)}to{transform:translateY(0) scale(1)}}
 @keyframes singleFingerTap{from{transform:translate(-50%,7px)}to{transform:translate(-50%,0)}}
+@keyframes tapOnce{0%,100%{transform:translate(-50%,6px)}45%{transform:translate(-50%,0)}}
+@keyframes tapTwice{0%,100%{transform:translate(-50%,7px)}20%,65%{transform:translate(-50%,0)}38%,82%{transform:translate(-50%,7px)}}
+@keyframes tapThree{0%,100%{transform:translate(-50%,7px)}12%,45%,78%{transform:translate(-50%,0)}27%,60%,92%{transform:translate(-50%,7px)}}
