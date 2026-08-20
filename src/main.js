@@ -2,6 +2,7 @@ import './style.css';
 import './memory.css';
 import './typing-games.css';
 import './cheonjiin-guide.css';
+import './mobile-keyboard.css';
 import { lessons } from './data.js';
 
 const app = document.querySelector('#app');
@@ -117,7 +118,7 @@ function openLesson(key) { currentKey = key; currentIndex = 0; $('practiceView')
 function showPractice() { stopMemoryTimer(); stopArcadeGame(); clearInterval(guideTimer); guideSignature = ''; $('homeView').hidden = true; $('lessonView').hidden = true; $('memoryView').hidden = true; $('arcadeView').hidden = true; $('practiceView').hidden = false; $('typingInput').blur(); $('arcadeInput').blur(); window.scrollTo({top:0,behavior:'smooth'}); }
 function showHome() { stopMemoryTimer(); stopArcadeGame(); clearInterval(guideTimer); guideSignature = ''; $('practiceView').hidden = true; $('lessonView').hidden = true; $('memoryView').hidden = true; $('arcadeView').hidden = true; $('homeView').hidden = false; $('typingInput').blur(); $('arcadeInput').blur(); window.scrollTo({top:0,behavior:'smooth'}); }
 function answer() { const item = lessons[currentKey].items[currentIndex % lessons[currentKey].items.length]; return typeof item === 'string' ? item : item.word; }
-function showQuestion() { const item = lessons[currentKey].items[currentIndex % lessons[currentKey].items.length]; $('prompt').innerHTML = typeof item === 'string' ? item : `<span class="picture">${item.emoji}</span><span class="picture-hint">이 그림의 이름은?</span>`; $('typingInput').value = ''; $('feedback').textContent = ''; updateCheonjiinGuide(); $('typingInput').focus({preventScroll:true}); }
+function showQuestion() { const item = lessons[currentKey].items[currentIndex % lessons[currentKey].items.length]; $('prompt').innerHTML = typeof item === 'string' ? item : `<span class="picture">${item.emoji}</span><span class="picture-hint">이 그림의 이름은?</span>`; $('typingInput').value = ''; $('feedback').textContent = ''; updateCheonjiinGuide(); }
 function checkAnswer() { const input = $('typingInput').value.trim(); if (!input) { $('feedback').textContent = '글자를 입력해 주세요.'; return; } record.completed++; if (input === answer()) { record.correct++; $('feedback').textContent = '참 잘했어요! 👏 다음 문제입니다.'; currentIndex++; localStorage.setItem('toktok-learning-record', JSON.stringify(record)); setTimeout(showQuestion, 900); } else { $('feedback').textContent = '조금 달라요. 천천히 다시 해보세요.'; } localStorage.setItem('toktok-learning-record', JSON.stringify(record)); }
 
 const memoryLevels = { beginner: { pairs: 3 }, intermediate: { pairs: 6 }, advanced: { pairs: 10 } };
@@ -198,6 +199,16 @@ function checkArcadeWord() {
 }
 function stopArcadeGame() { arcadeRunning = false; clearInterval(arcadeSpawnTimer); clearInterval(arcadeClockTimer); arcadeSpawnTimer = null; arcadeClockTimer = null; }
 function finishArcadeGame() { stopArcadeGame(); document.querySelectorAll('.falling-word').forEach(word => word.remove()); $('arcadeReady').hidden = false; $('arcadeReady').innerHTML = `<span>🏆</span><p>게임 끝!<br><strong>${arcadeScore}점</strong>을 얻었어요</p>`; $('arcadeStart').textContent = '다시 시작'; $('arcadeStart').disabled = false; record.completed++; record.correct += arcadeScore / 10; localStorage.setItem('toktok-learning-record', JSON.stringify(record)); }
+
+let largestViewportHeight = window.visualViewport?.height || window.innerHeight;
+function updateKeyboardLayout() {
+  const currentHeight = window.visualViewport?.height || window.innerHeight;
+  largestViewportHeight = Math.max(largestViewportHeight, currentHeight);
+  document.body.classList.toggle('keyboard-open', largestViewportHeight - currentHeight > 140);
+}
+window.visualViewport?.addEventListener('resize', updateKeyboardLayout);
+window.visualViewport?.addEventListener('scroll', updateKeyboardLayout);
+window.addEventListener('orientationchange', () => { largestViewportHeight = window.visualViewport?.height || window.innerHeight; updateKeyboardLayout(); });
 
 if ('serviceWorker' in navigator) window.addEventListener('load', async () => {
   try {

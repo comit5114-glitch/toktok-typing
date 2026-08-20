@@ -1,0 +1,102 @@
+@media (max-width: 600px) {
+  body.keyboard-open {
+    min-height: 100%;
+  }
+
+  body.keyboard-open header {
+    display: none;
+  }
+
+  body.keyboard-open main {
+    width: calc(100% - 12px);
+    margin: 5px auto;
+  }
+
+  body.keyboard-open footer,
+  body.keyboard-open .update {
+    display: none;
+  }
+
+  body.keyboard-open .lesson,
+  body.keyboard-open .arcade {
+    padding: 8px;
+    border-radius: 15px;
+    box-shadow: none;
+  }
+
+  body.keyboard-open .lesson .back,
+  body.keyboard-open .lesson h2,
+  body.keyboard-open .arcade-title {
+    display: none;
+  }
+
+  body.keyboard-open .prompt {
+    min-height: 58px;
+    margin: 0 0 6px;
+    padding: 6px;
+    border-radius: 12px;
+    font-size: 1.7rem;
+  }
+
+  body.keyboard-open .cheonjiin {
+    margin: 0 0 7px;
+    padding: 7px;
+    border-radius: 13px;
+  }
+
+  body.keyboard-open .keypad-head {
+    margin-bottom: 5px;
+  }
+
+  body.keyboard-open .keypad-head strong {
+    font-size: .75rem;
+  }
+
+  body.keyboard-open .keypad-head span {
+    font-size: .62rem;
+  }
+
+  body.keyboard-open .cheonjiin-keys {
+    gap: 4px;
+  }
+
+  body.keyboard-open .cheon-key {
+    min-height: 32px;
+    border-radius: 8px;
+    font-size: .82rem;
+    box-shadow: 0 2px 0 #d8e1de;
+  }
+
+  body.keyboard-open .lesson label,
+  body.keyboard-open .arcade > label {
+    margin: 4px 0;
+    font-size: .75rem;
+  }
+
+  body.keyboard-open .lesson input,
+  body.keyboard-open .arcade-input {
+    height: 48px;
+  }
+
+  body.keyboard-open .feedback {
+    min-height: 20px;
+    margin: 4px 0;
+    font-size: .75rem;
+  }
+
+  body.keyboard-open .check {
+    min-height: 46px;
+  }
+
+  body.keyboard-open .arcade-head {
+    margin-bottom: 5px;
+  }
+
+  body.keyboard-open .arcade-field {
+    height: 150px;
+  }
+
+  body.keyboard-open .arcade-actions {
+    margin-top: 7px;
+  }
+}
